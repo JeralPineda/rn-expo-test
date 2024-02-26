@@ -2,6 +2,11 @@ import { useSession } from "@/context/ctx";
 import { router } from "expo-router";
 import { Button, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 import { useForm, Controller } from "react-hook-form";
+import { useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import LoginInput from "@/components/ui/forms/login-input";
+import { LoginSchema } from "@/lib/validators/login";
 
 interface LoginFormData {
   username: string;
@@ -16,7 +21,10 @@ export default function SignIn() {
       username: "",
       password: "",
     },
+    resolver: zodResolver(LoginSchema),
   });
+
+  const inputRef = useRef<TextInput | null>(null);
 
   const onSubmit = (data: LoginFormData) => {
     console.log("🚀 sign-in.tsx -> #22 -> data ~", JSON.stringify(data, null, 2));
@@ -37,50 +45,37 @@ export default function SignIn() {
       </Text> */}
 
       <View style={styles.container}>
-        <Controller
+        <Text>Login</Text>
+        <LoginInput
+          //
           control={control}
+          label="Usuario"
           name="username"
-          render={({ field: { value, onChange, onBlur } }) => (
-            // <Pressable>
-            <View style={styles.innerContainer}>
-              <View style={styles.input}>
-                <Text style={styles.textLabel}>Nombre</Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    placeholder="email"
-                    style={styles.inputStyled}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    // Add other TextInput props as needed
-                  />
-                </View>
-              </View>
-            </View>
-            // </Pressable>
-          )}
+          rules={{ required: "Usuario es requerido" }}
         />
+
         <Controller
           control={control}
           name="password"
           render={({ field: { value, onChange, onBlur } }) => (
-            // <Pressable>
-            <View style={styles.innerContainer}>
-              <View style={styles.input}>
-                <Text style={styles.textLabel}>Contraseña</Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    placeholder="Contraseña"
-                    style={styles.inputStyled}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    // Add other TextInput props as needed
-                  />
+            <Pressable style={styles.containerPress} onPress={() => inputRef.current && inputRef.current.focus()}>
+              <View style={styles.innerContainer}>
+                <View style={styles.input}>
+                  <Text style={styles.textLabel}>Contraseña</Text>
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      placeholder="Contraseña"
+                      style={styles.inputStyled}
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      ref={inputRef}
+                      // Add other TextInput props as needed
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-            // </Pressable>
+            </Pressable>
           )}
         />
         <Button title="Submit" onPress={handleSubmit(onSubmit)} />
@@ -93,17 +88,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "center",
     padding: 20,
     width: "100%",
     borderRadius: 16,
     // backgroundColor: "red",
   },
+  containerPress: {
+    // flex: 1,
+    width: "100%",
+    paddingVertical: 10,
+  },
   innerContainer: {
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
     flexDirection: "row",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   input: {
     flex: 1,
@@ -125,9 +125,13 @@ const styles = StyleSheet.create({
   },
   textLabel: {
     fontSize: 12,
-    fontFamily: "regular",
     marginLeft: 10,
     marginTop: 10,
     color: "#919191",
+  },
+  errorMessage: {
+    color: "red",
+    textAlign: "left",
+    marginLeft: 10,
   },
 });
