@@ -1,10 +1,8 @@
 import { useSession } from "@/context/ctx";
 import { router } from "expo-router";
-import { Button, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { useRef } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import LoginInput from "@/components/ui/forms/login-input";
 import { LoginSchema } from "@/lib/validators/login";
 
@@ -24,26 +22,19 @@ export default function SignIn() {
     resolver: zodResolver(LoginSchema),
   });
 
-  const inputRef = useRef<TextInput | null>(null);
+  const { username } = watch();
 
   const onSubmit = (data: LoginFormData) => {
     console.log("🚀 sign-in.tsx -> #22 -> data ~", JSON.stringify(data, null, 2));
+    signIn();
+    // Navigate after signing in. You may want to tweak this to ensure sign-in is
+    // successful before navigating.
+    router.replace("/");
     // Here you can perform further actions with the form data, like sending it to a server
   };
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      {/* <Text
-        onPress={() => {
-          signIn();
-          // Navigate after signing in. You may want to tweak this to ensure sign-in is
-          // successful before navigating.
-          router.replace("/");
-        }}
-      >
-        Sign In
-      </Text> */}
-
       <View style={styles.container}>
         <Text>Login</Text>
         <LoginInput
@@ -53,30 +44,14 @@ export default function SignIn() {
           name="username"
           rules={{ required: "Usuario es requerido" }}
         />
-
-        <Controller
+        <LoginInput
+          //
           control={control}
+          label="Contraseña"
           name="password"
-          render={({ field: { value, onChange, onBlur } }) => (
-            <Pressable style={styles.containerPress} onPress={() => inputRef.current && inputRef.current.focus()}>
-              <View style={styles.innerContainer}>
-                <View style={styles.input}>
-                  <Text style={styles.textLabel}>Contraseña</Text>
-                  <View style={styles.inputContainer}>
-                    <TextInput
-                      placeholder="Contraseña"
-                      style={styles.inputStyled}
-                      value={value}
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      ref={inputRef}
-                      // Add other TextInput props as needed
-                    />
-                  </View>
-                </View>
-              </View>
-            </Pressable>
-          )}
+          type="password"
+          rules={{ required: "Usuario es requerido" }}
+          username={username}
         />
         <Button title="Submit" onPress={handleSubmit(onSubmit)} />
       </View>
