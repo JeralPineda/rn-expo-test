@@ -1,39 +1,95 @@
-import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
-import React, { useRef } from "react";
+import { View, Text, Pressable, TextInput, StyleSheet, Keyboard } from "react-native";
+import React, { useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { LoginInputProps } from "@/types/form";
+import Ionicons from "@expo/vector-icons/Feather";
 
 export default function LoginInput({ control, label, name, type, rules, handleSubmit, username }: LoginInputProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   const inputRef = useRef<TextInput | null>(null);
+
+  const handleSubmitting = (text: string) => {
+    if (username && text) {
+      handleSubmit && handleSubmit();
+    } else {
+      Keyboard.dismiss();
+    }
+  };
 
   return (
     <Controller
       rules={rules}
       control={control}
       name={name}
-      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
-        <>
-          <Pressable style={styles.containerPress} onPress={() => inputRef.current && inputRef.current.focus()}>
-            <View style={styles.innerContainer}>
-              <View style={styles.input}>
-                <Text style={styles.textLabel}>{label}</Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    placeholder="email"
-                    style={styles.inputStyled}
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    ref={inputRef}
-                    // Add other TextInput props as needed
+      render={({ field: { value, onChange, onBlur }, fieldState: { error } }) =>
+        type !== "password" ? (
+          <>
+            <Pressable style={styles.containerPress} onPress={() => inputRef.current && inputRef.current.focus()}>
+              <View style={styles.innerContainer}>
+                <View style={styles.input}>
+                  <Text style={styles.textLabel}>{label}</Text>
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      style={styles.inputStyled}
+                      value={value}
+                      spellCheck={false}
+                      autoCorrect={false}
+                      returnKeyType="done"
+                      autoCapitalize="none"
+                      onChangeText={(text) => {
+                        onChange(text);
+                      }}
+                      onBlur={onBlur}
+                      ref={inputRef}
+                      // Add other TextInput props as needed
+                    />
+                  </View>
+                </View>
+              </View>
+            </Pressable>
+            {error && <Text style={styles.errorMessage}>{error?.message}</Text>}
+          </>
+        ) : (
+          <>
+            <Pressable style={styles.containerPress} onPress={() => inputRef.current && inputRef.current.focus()}>
+              <View style={styles.innerContainer}>
+                <View style={styles.input}>
+                  <Text style={styles.textLabel}>{label}</Text>
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      secureTextEntry={!showPassword}
+                      onChangeText={(text) => {
+                        onChange(text);
+                      }}
+                      style={styles.inputStyled}
+                      value={value}
+                      onBlur={onBlur}
+                      spellCheck={false}
+                      autoCorrect={false}
+                      returnKeyType="done"
+                      autoCapitalize="none"
+                      ref={inputRef}
+                      onSubmitEditing={(event) => handleSubmitting(event.nativeEvent.text)}
+                      // Add other TextInput props as needed
+                    />
+                  </View>
+                </View>
+                {/*  */}
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name={showPassword ? "eye" : "eye-off"}
+                    style={styles.icon}
+                    size={18}
+                    onPress={() => setShowPassword((prev) => !prev)}
                   />
                 </View>
               </View>
-            </View>
-          </Pressable>
-          {error && <Text style={styles.errorMessage}>{error?.message}</Text>}
-        </>
-      )}
+            </Pressable>
+            {error && <Text style={styles.errorMessage}>{error?.message}</Text>}
+          </>
+        )
+      }
     />
   );
 }
@@ -87,5 +143,14 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "left",
     marginLeft: 10,
+  },
+  icon: {
+    padding: 15,
+    color: "#919191",
+    backgroundColor: "transparent",
+  },
+  iconContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
