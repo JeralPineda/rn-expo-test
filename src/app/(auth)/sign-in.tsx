@@ -1,6 +1,6 @@
 import { useSession } from "@/context/ctx";
 import { router } from "expo-router";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoginInput from "@/components/ui/forms/login-input";
@@ -38,8 +38,8 @@ export default function SignIn() {
       //
       className="flex-1 justify-center items-center"
     >
-      <View style={styles.container}>
-        <Text>Login</Text>
+      <View className="flex-1 justify-center w-full p-5">
+        <Text className="text-center font-bold text-2xl">Login</Text>
         <LoginInput
           //
           control={control}
@@ -61,55 +61,3 @@ export default function SignIn() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    // alignItems: "center",
-    padding: 20,
-    width: "100%",
-    borderRadius: 16,
-    // backgroundColor: "red",
-  },
-  containerPress: {
-    // flex: 1,
-    width: "100%",
-    paddingVertical: 10,
-  },
-  innerContainer: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    flexDirection: "row",
-    // marginBottom: 10,
-  },
-  input: {
-    flex: 1,
-    padding: 4,
-  },
-  inputContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    // padding: 10,
-    // borderRadius: 8,
-  },
-  inputStyled: {
-    flex: 1,
-    fontSize: 14,
-    paddingBottom: 10,
-    paddingHorizontal: 10,
-  },
-  textLabel: {
-    fontSize: 12,
-    marginLeft: 10,
-    marginTop: 10,
-    color: "#919191",
-  },
-  errorMessage: {
-    color: "red",
-    textAlign: "left",
-    marginLeft: 10,
-  },
-});
